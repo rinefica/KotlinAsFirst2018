@@ -19,8 +19,8 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean = ((number / 1000 + (number / 100 % 10)) ==
-        number / 10 % 10 + number % 10)
+fun isNumberHappy(number: Int): Boolean =
+        ((number / 1000 + (number / 100 % 10)) == number / 10 % 10 + number % 10)
 
 /**
  * Простая
@@ -40,8 +40,8 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = ((x1 == x2) ||
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int = when(month){
-    1,3,5,7,8,10,12 -> 31
-    4,6,9,11 -> 30
+    1, 3, 5, 7, 8, 10, 12 -> 31
+    4, 6, 9, 11 -> 30
     2 -> if((year % 4 == 0) && (!(year % 100 == 0) || (year % 400 == 0))) 29 else 28
     else -> -1
 }
@@ -70,31 +70,19 @@ fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean{
     val max = max(r,s)
     val min = min(r,s)
 
-    val brick_max:Int
-    var brick_average:Int
-    var brick_min:Int
+    val brickMax = maxOf(a, b, c)
+    val brickMin = minOf(a, b, c)
 
-    if((a >= b) && (a >= c)){
-        brick_max = a
-        brick_average = b
-        brick_min = c
-    } else if(b >= c){
-        brick_max = b
-        brick_average = a
-        brick_min = c
-    } else{
-        brick_max = c
-        brick_average = b
-        brick_min = a
-    }
+    val brickAverage:Int
 
-    if(brick_min > brick_average) {
-        val temp = brick_min
-        brick_min = brick_average
-        brick_average = temp
-    }
+    if((a >= b) && (a >= c))
+        brickAverage = if(b >= c) b else c
+    else if((b >= a) && (b >= c))
+        brickAverage = if(a >= c) a else c
+    else
+        brickAverage = if(a >= b) a else b
 
-    return ((min >= brick_min) &&
-                ((max >= brick_average) || (max >= brick_max)))
-            || ((min >= brick_average) && (max >= brick_max))
+
+    return (((min >= brickMin) && ((max >= brickAverage) || (max >= brickMax)))
+            || ((min >= brickAverage) && (max >= brickMax)))
 }

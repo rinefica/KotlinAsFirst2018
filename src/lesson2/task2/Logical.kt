@@ -2,6 +2,7 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
+import lesson2.task1.medianOf
 import kotlin.math.max
 import kotlin.math.min
 
@@ -20,7 +21,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
 fun isNumberHappy(number: Int): Boolean =
-        ((number / 1000 + (number / 100 % 10)) == number / 10 % 10 + number % 10)
+        number / 1000 + number / 100 % 10 == number / 10 % 10 + number % 10
 
 /**
  * Простая
@@ -70,19 +71,8 @@ fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean{
     val max = max(r,s)
     val min = min(r,s)
 
-    val brickMax = maxOf(a, b, c)
     val brickMin = minOf(a, b, c)
-
-    val brickAverage:Int
-
-    if((a >= b) && (a >= c))
-        brickAverage = if(b >= c) b else c
-    else if((b >= a) && (b >= c))
-        brickAverage = if(a >= c) a else c
-    else
-        brickAverage = if(a >= b) a else b
-
-
-    return (((min >= brickMin) && ((max >= brickAverage) || (max >= brickMax)))
-            || ((min >= brickAverage) && (max >= brickMax)))
+    val brickAverage = medianOf(a, b, c)
+    
+    return (min >= brickMin) && (max >= brickAverage)
 }

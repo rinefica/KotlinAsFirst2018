@@ -161,6 +161,16 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
     return danger
 }
 
+fun <T : kotlin.Comparable<T>> medianOf(a: T, b: T, c: T): T{
+    if((a >= b) && (a >= c)) //a - max
+        return if(b >= c) b else c
+    else if((a <= b) && (a <= c))//a - min
+        return if(b >= c) c else b
+
+    return a
+
+}
+
 /**
  * Простая
  *
@@ -173,23 +183,9 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
     if(((a + b) <= c) || ((a + c) <= b) || ((c + b) <= a))
         return -1
 
-    val max: Double
-    val l1: Double
-    val l2: Double
-
-    if((a >= b) && (a >= c)){
-        max = a
-        l1 = b
-        l2 = c
-    } else if(b > c){
-        max = b
-        l1 = a
-        l2 = c
-    } else{
-        max = c
-        l1 = b
-        l2 = a
-    }
+    val max: Double = maxOf(a, b, c)
+    val l1: Double = medianOf(a, b, c)
+    val l2: Double = minOf(a, b, c)
 
     if(max * max == l1 * l1 + l2 * l2) return 1
     if(max * max < l1 * l1 + l2 * l2) return 0
@@ -207,8 +203,8 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int{
-    val start = if(a < c) c else a
-    val end = if (b > d) d else b
+    val start = maxOf(a, c)
+    val end = minOf(b, d)
 
     if(start > end) return -1
 

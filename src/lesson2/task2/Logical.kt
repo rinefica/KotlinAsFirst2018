@@ -73,6 +73,6 @@ fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean{
 
     val brickMin = minOf(a, b, c)
     val brickAverage = medianOf(a, b, c)
-    
+
     return (min >= brickMin) && (max >= brickAverage)
 }

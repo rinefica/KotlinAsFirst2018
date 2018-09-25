@@ -108,7 +108,8 @@ fun fib(n: Int): Int /*= if ((n == 1) || (n == 2)) 1 else (fib(n - 1) + fib(n - 
 
 
 fun gcd(k: Int, l: Int): Int = if(k == l) k
-    else gcd(max(k, l) - min(k, l), min(k, l))
+    else if(min(k, l) == 1) 1 else
+        gcd(max(k, l) - min(k, l), min(k, l))
 /**
  * Простая
  *
@@ -148,8 +149,8 @@ fun maxDivisor(n: Int) = n / minDivisor(n)
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    if((isPrime(m) && isPrime(n) && (max(m, n) % min(m, n) != 0)) ||
-            (m == 1) || (n == 1)) return true
+    if((m == 1) || (n == 1)) return true
+    if(max(m, n) % min(m, n) == 0) return false
 
     return gcd(m, n) == 1
 }

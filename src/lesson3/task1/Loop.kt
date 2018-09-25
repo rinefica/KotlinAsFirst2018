@@ -98,7 +98,7 @@ fun fib(n: Int): Int /*= if ((n == 1) || (n == 2)) 1 else (fib(n - 1) + fib(n - 
     var cur = 2
 
     for(i in 3..n){
-        cur = prev +prevPrev
+        cur = prev + prevPrev
         prevPrev = prev
         prev = cur
     }
@@ -106,6 +106,9 @@ fun fib(n: Int): Int /*= if ((n == 1) || (n == 2)) 1 else (fib(n - 1) + fib(n - 
     return cur
 }
 
+
+fun gcd(k: Int, l: Int): Int = if(k == l) k
+    else gcd(max(k, l) - min(k, l), min(k, l))
 /**
  * Простая
  *
@@ -113,10 +116,9 @@ fun fib(n: Int): Int /*= if ((n == 1) || (n == 2)) 1 else (fib(n - 1) + fib(n - 
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int{
-    for(k in max(m, n)..(m * n) / 2)
-        if ((k % m == 0) && (k % n == 0))
-            return k
-    return m * n
+    if(max(m, n) % min(m, n) == 0) return max(m, n)
+    if(isPrime(m) || isPrime(n)) return m * n
+    return m * n / gcd(m, n)
 }
 
 /**
@@ -125,7 +127,6 @@ fun lcm(m: Int, n: Int): Int{
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int{
-    if(isPrime(n)) return n
     for(i in 2..Math.sqrt(n.toDouble()).toInt())
         if (n % i == 0)
             return i
@@ -137,14 +138,7 @@ fun minDivisor(n: Int): Int{
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int{
-    if(isPrime(n)) return 1
-
-    for(i in n/2 downTo 2)
-        if(n % i == 0) return i
-
-    return 1
-}
+fun maxDivisor(n: Int) = n / minDivisor(n)
 
 /**
  * Простая
@@ -154,18 +148,10 @@ fun maxDivisor(n: Int): Int{
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    if((isPrime(m) && isPrime(n) && (m != n)) ||
+    if((isPrime(m) && isPrime(n) && (max(m, n) % min(m, n) != 0)) ||
             (m == 1) || (n == 1)) return true
 
-
-    if(((m % 2 == 0) && (n % 2 == 0)) ||
-            (max(m, n) % min(m, n) == 0))
-        return false
-
-    for(i in 3 until min(m, n) step 2)
-        if ((m % i == 0) && (n % i == 0))
-            return false
-    return true
+    return gcd(m, n) == 1
 }
 
 /**
@@ -210,13 +196,7 @@ fun collatzSteps(x: Int): Int =
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double{
-    var number = x
-    while (abs(number) > 2 * PI){
-        if(number > 0)
-            number -= 2 * PI
-        else
-            number += 2 * PI
-    }
+    var number = x % (2 * PI)
 
     fun createMember(n: Int): Double{
         val i = 2 * n + 1
@@ -224,7 +204,6 @@ fun sin(x: Double, eps: Double): Double{
 
         return sign * pow(number, i.toDouble()) / factorial(i)
     }
-
 
     var answer = number
     var n = 1
@@ -281,7 +260,7 @@ fun revert(n: Int): Int{
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean =
-        n - revert(n) == 0
+        n == revert(n)
 
 
 /**
@@ -335,9 +314,9 @@ fun findDigitN(n: Int, functionCreate: (Int) -> Int): Int{
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int{
-    if (n == 1) return 1
+    if(n == 1) return 1
 
-    return findDigitN(n){ it -> it * it}
+    return findDigitN(n){it * it}
 }
 
 /**
@@ -350,7 +329,7 @@ fun squareSequenceDigit(n: Int): Int{
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int{
-    if (n in setOf(1, 2)) return 1
+    if(n in setOf(1, 2)) return 1
 
-    return findDigitN(n){ it -> fib(it)}
+    return findDigitN(n){fib(it)}
 }

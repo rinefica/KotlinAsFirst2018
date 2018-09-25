@@ -175,9 +175,9 @@ fun times(a: List<Double>, b: List<Double>): Double = a.foldIndexed(0.0){
 fun polynom(p: List<Double>, x: Double): Double{
     if(p.isEmpty()) return 0.0
 
-    return p.fold(0.0){
-        previousResult, element ->
-        previousResult + element * Math.pow(x, p.indexOf(element).toDouble())
+    return p.foldIndexed(0.0){
+        index, previousResult, element ->
+        previousResult + element * Math.pow(x, index.toDouble())
     }
 }
 

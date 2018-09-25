@@ -152,7 +152,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
     if((m == 1) || (n == 1)) return true
     if(max(m, n) % min(m, n) == 0) return false
 
-    return gcd(m, n) == 1
+    return lcm(m, n) == m * n
 }
 
 /**

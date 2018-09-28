@@ -298,11 +298,11 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = b.
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    var people = listOf<String>()
+    var people = setOf<String>()
     for (name in a)
         if (b.contains(name))
             people += name
-    return people
+    return people.toList()
 }
 
 

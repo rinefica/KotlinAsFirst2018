@@ -128,16 +128,10 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {//Сортировка
     if (grades.isEmpty()) return mapOf()
-    var gradeToStudent = mutableMapOf<Int, List<String>>()
 
-    for (i in 2..5) {
-        var students = listOf<String>()
-        for ((name, grade) in grades) {
-            if (grade == i) students += name
-        }
-        if (students.isNotEmpty())
-            gradeToStudent[i] = students
-    }
+    var gradeToStudent = mutableMapOf<Int, List<String>>()
+    grades.forEach { t, u ->
+        gradeToStudent[u] = (gradeToStudent[u] ?: emptyList()) + t }
 
     return gradeToStudent
 }

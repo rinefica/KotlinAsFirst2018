@@ -119,7 +119,7 @@ fun gcd(k: Int, l: Int): Int = if(k == l) k
 fun lcm(m: Int, n: Int): Int{
     if(max(m, n) % min(m, n) == 0) return max(m, n)
     if(isPrime(m) || isPrime(n)) return m * n
-    return m * n / gcd(m, n)
+    return m / gcd(m, n) * n
 }
 
 /**

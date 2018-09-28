@@ -413,10 +413,12 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     var max = -1
 
     if (list.contains(0) && list.contains(number)) {
-        val i0 = list.lastIndexOf(0)
+        val i0 = list.indexOf(0)
         val iNumber = list.lastIndexOf(number)
-        min = kotlin.math.min(i0, iNumber)
-        max = kotlin.math.max(i0, iNumber)
+        if(i0 != iNumber){
+            min = kotlin.math.min(i0, iNumber)
+            max = kotlin.math.max(i0, iNumber)
+        }
     } else {
         if (number % 2 == 0) {
             val halfNumber = number / 2

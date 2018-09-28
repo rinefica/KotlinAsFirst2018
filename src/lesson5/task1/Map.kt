@@ -181,6 +181,10 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     return averagePrice
 }
 
+
+fun main(args: Array<String>) {
+    println("${(Double.NaN > Double.MAX_VALUE)}")
+}
 /**
  * Средняя
  *
@@ -201,7 +205,8 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
     var answer: String? = null
 
     stuff.forEach { t, u ->
-        if ((u.first == kind) && (minPrice > u.second)) {
+        if ((u.first == kind) &&
+                ((minPrice == Double.MAX_VALUE) || (minPrice > u.second))) {
             minPrice = u.second
             answer = t
         }

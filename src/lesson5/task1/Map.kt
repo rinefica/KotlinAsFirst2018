@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import kotlin.math.max
+
 /**
  * Пример
  *
@@ -495,12 +497,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             curPrice = treasures.values.toList()[i - 1].second
             price[i][j] =
                     if (curWeight <= j)
-                        if (price[i - 1][j] > price[i - 1][j - curWeight] + curPrice)
-                            price[i - 1][j]
-                        else {
-//                            answer += treasures.keys.toList()[i - 1]
-                            price[i - 1][j - curWeight] + curPrice
-                        }
+                        max(price[i - 1][j], price[i - 1][j - curWeight] + curPrice)
                     else
                         price[i - 1][j]
 

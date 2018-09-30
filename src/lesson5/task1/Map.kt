@@ -184,11 +184,6 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     return averagePrice
 }
 
-
-fun main(args: Array<String>) {
-    println("${(Double.NaN > Double.MAX_VALUE)}")
-}
-
 /**
  * Средняя
  *
@@ -308,7 +303,6 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     return people.toList()
 }
 
-
 /**
  * Средняя
  *
@@ -324,7 +318,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     for (char in word)
         setChar += char.toLowerCase()
 
-    return setChar.all { c -> chars.contains(c) }
+    return setChar.all { chars.map { it.toLowerCase() }.contains(it) }
 }
 
 /**

@@ -126,12 +126,13 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {//Сортировка
+fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     if (grades.isEmpty()) return mapOf()
 
     var gradeToStudent = mutableMapOf<Int, List<String>>()
     grades.forEach { t, u ->
-        gradeToStudent[u] = (gradeToStudent[u] ?: emptyList()) + t }
+        gradeToStudent[u] = (gradeToStudent[u] ?: emptyList()) + t
+    }
 
     return gradeToStudent
 }
@@ -185,6 +186,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun main(args: Array<String>) {
     println("${(Double.NaN > Double.MAX_VALUE)}")
 }
+
 /**
  * Средняя
  *
@@ -318,7 +320,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     var setChar = setOf<Char>()
 
     for (char in word)
-        setChar += char
+        setChar += char.toLowerCase()
 
     return setChar.all { c -> chars.contains(c) }
 }
@@ -414,7 +416,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     if (list.contains(0) && list.contains(number)) {
         val i0 = list.indexOf(0)
         val iNumber = list.lastIndexOf(number)
-        if(i0 != iNumber){
+        if (i0 != iNumber) {
             min = kotlin.math.min(i0, iNumber)
             max = kotlin.math.max(i0, iNumber)
         }
@@ -469,6 +471,17 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     val countM = capacity + 1
     var price: Array<Array<Int>> = Array(countTreas) { Array(countM) { 0 } }
 
+    fun findAnswer(k: Int, s: Int) {
+        if (price[k][s] == 0)
+            return
+        if (price[k - 1][s] == price[k][s])
+            findAnswer(k - 1, s)
+        else {
+            findAnswer(k - 1, s - treasures.values.toList()[k - 1].first)
+            answer += treasures.keys.toList()[k - 1]
+        }
+    }
+
     for (i in 0 until countTreas)
         price[i][0] = 0
     for (i in 0 until countM)
@@ -481,11 +494,11 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             curWeight = treasures.values.toList()[i - 1].first
             curPrice = treasures.values.toList()[i - 1].second
             price[i][j] =
-                    if (curWeight < j)
+                    if (curWeight <= j)
                         if (price[i - 1][j] > price[i - 1][j - curWeight] + curPrice)
                             price[i - 1][j]
-                        else{
-                            answer += treasures.keys.toList()[i - 1]
+                        else {
+//                            answer += treasures.keys.toList()[i - 1]
                             price[i - 1][j - curWeight] + curPrice
                         }
                     else
@@ -493,6 +506,8 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
 
         }
     }
+
+    findAnswer(countTreas - 1, countM - 1)
 
     return answer
 }

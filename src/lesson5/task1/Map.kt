@@ -149,13 +149,8 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    for ((key, value) in a) {
-        if (b[key] != value)
-            return false
-    }
-    return true
-}
+fun containsIn(a: Map<String, String>, b: Map<String, String>) =
+        a.all { (t,u) -> b[t] == u }
 
 /**
  * Средняя
@@ -284,10 +279,8 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   subtractOf(a = mutableMapOf("a" to "z"), mapOf("a" to "z"))
  *     -> a changes to mutableMapOf() aka becomes empty
  */
-fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = b.forEach { key, value ->
-    if (a.containsKey(key) && (a[key] == value))
-        a.remove(key)
-}
+fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit =
+        b.forEach { key, value -> a.remove(key, value) }
 
 
 /**
@@ -295,13 +288,8 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = b.
  *
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    var people = setOf<String>()
-    for (name in a)
-        if (b.contains(name))
-            people += name
-    return people.toList()
-}
+fun whoAreInBoth(a: List<String>, b: List<String>) =
+        a.filter { name -> b.contains(name) }
 
 /**
  * Средняя
@@ -313,7 +301,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String) =
-        word.all { chars.map { it.toLowerCase() }.contains(it.toLowerCase()) }
+        word.toSet().all {symbol -> chars.map { it.toLowerCase() }.contains(symbol.toLowerCase()) }
 
 /**
  * Средняя

@@ -97,22 +97,14 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    var mapC = mutableMapOf<String, String>()
-    var newPhone = mutableSetOf<String?>()
 
-    var allKeys = mutableSetOf<String>()
-    mapA.forEach { t, _ -> allKeys.add(t) }
-    mapB.forEach { t, _ -> allKeys.add(t) }
+    var mapC = (mapB + mapA).toMutableMap()
 
-    for (name in allKeys) {
-        newPhone.clear()
-
-        if (name in mapA)
-            newPhone.add(mapA[name])
-        if (name in mapB)
-            newPhone.add(mapB[name])
-
-        mapC[name] = newPhone.joinToString()
+    mapC.forEach { keyC, _ ->
+        mapB[keyC]?.let { entryB ->
+            mapC.merge(keyC, entryB
+            ) { t: String, u: String -> setOf(t, u).joinToString() }
+        }
     }
 
     return mapC
@@ -129,8 +121,6 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    if (grades.isEmpty()) return mapOf()
-
     var gradeToStudent = mutableMapOf<Int, List<String>>()
     grades.forEach { t, u ->
         gradeToStudent[u] = (gradeToStudent[u] ?: emptyList()) + t
@@ -150,7 +140,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>) =
-        a.all { (t,u) -> b[t] == u }
+        a.all { (t, u) -> b[t] == u }
 
 /**
  * Средняя
@@ -163,20 +153,13 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>) =
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    var averagePrice = mutableMapOf<String, Double>()
-    var sumPrice = mutableMapOf<String, Pair<Double, Int>>()
+    var sumPrice = mutableMapOf<String, List<Double>>()
 
     for ((name, price) in stockPrices) {
-        if (!sumPrice.containsKey(name))
-            sumPrice.put(name, price to 1)
-        else
-            sumPrice[name] = (((sumPrice[name]?.first ?: 0.0) + price)
-                    to ((sumPrice[name]?.second ?: 1) + 1))
+        sumPrice.merge(name, listOf(price)) { v, v1 -> v + v1 }
     }
 
-    sumPrice.forEach { t, u -> averagePrice[t] = u.first / u.second }
-
-    return averagePrice
+    return sumPrice.mapValues { it.value.average() }
 }
 
 /**
@@ -194,20 +177,8 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    var minPrice = Double.MAX_VALUE
-    var answer: String? = null
-
-    stuff.forEach { t, u ->
-        if ((u.first == kind) &&
-                ((minPrice == Double.MAX_VALUE) || (minPrice > u.second))) {
-            minPrice = u.second
-            answer = t
-        }
-    }
-
-    return answer
-}
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? =
+        stuff.filterValues { it.first == kind }.minBy { it.value.second }?.key
 
 /**
  * Сложная
@@ -301,7 +272,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>) =
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String) =
-        word.toSet().all {symbol -> chars.map { it.toLowerCase() }.contains(symbol.toLowerCase()) }
+        word.toSet().all { symbol -> chars.map { it.toLowerCase() }.contains(symbol.toLowerCase()) }
 
 /**
  * Средняя
@@ -315,22 +286,8 @@ fun canBuildFrom(chars: List<Char>, word: String) =
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> {
-    var uniq = setOf<String>()
-    var repeats = mutableMapOf<String, Int>()
-
-    for (value in list) {
-        if (uniq.contains(value)) {
-            if (repeats.contains(value))
-                repeats[value] = (repeats[value] ?: 0) + 1
-            else
-                repeats[value] = 2
-        } else
-            uniq += value
-    }
-
-    return repeats
-}
+fun extractRepeats(list: List<String>): Map<String, Int> =
+        list.groupingBy { it }.eachCount().filterNot { it.value == 1 }
 
 /**
  * Средняя
@@ -358,6 +315,7 @@ fun hasAnagrams(words: List<String>): Boolean {
         for (j in (i + 1) until words.size) {
             if (words[i].length == words[j].length) {
                 nextWord = createList(words[j])
+
                 for (c in curWord)
                     nextWord -= c
                 if (nextWord.isEmpty())
@@ -388,37 +346,35 @@ fun hasAnagrams(words: List<String>): Boolean {
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    var min = -1
-    var max = -1
+    if (list.isEmpty()) return Pair(-1, -1)
 
-    if (list.contains(0) && list.contains(number)) {
-        val i0 = list.indexOf(0)
-        val iNumber = list.lastIndexOf(number)
-        if (i0 != iNumber) {
-            min = kotlin.math.min(i0, iNumber)
-            max = kotlin.math.max(i0, iNumber)
-        }
+    var min = 0
+    var max = list.size - 1
+    var myList = list.sorted()
+
+    while (min < max) {
+        if (myList[min] + myList[max] == number)
+            break
+        if (myList[min] + myList[max] < number)
+            min++
+
+        if (myList[min] + myList[max] > number)
+            max--
+    }
+
+    if (min == max) {
+        return Pair(-1, -1)
     } else {
-        if (number % 2 == 0) {
-            val halfNumber = number / 2
-
-            if (list.contains(halfNumber) &&
-                    (list.indexOf(halfNumber) != list.lastIndexOf(halfNumber)))
-                return Pair(list.indexOf(halfNumber),
-                        list.lastIndexOf(halfNumber))
+        if (myList[max] == myList[min]) {
+            min = list.indexOf(myList[min])
+            for (i in min + 1 until list.size)
+                if (list[i] == myList[max])
+                    max = i
+        } else {
+            min = list.indexOf(myList[min])
+            max = list.indexOf(myList[max])
         }
 
-        for (i in 0 until list.size) {
-
-            if ((list[i] in setOf(0, number, if (number % 2 == 0) (number / 2) else 0))
-                    || (list[i] > number))
-                continue
-
-            for (j in (i + 1) until list.size)
-                if (list[i] + list[j] == number)
-                    return Pair(i, j)
-
-        }
     }
 
     return Pair(min, max)

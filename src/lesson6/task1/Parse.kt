@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+
 /**
  * Пример
  *
@@ -42,7 +44,7 @@ fun timeSecondsToStr(seconds: Int): String {
 /**
  * Пример: консольный ввод
  */
-fun main(args: Array<String>) {
+/*fun main(args: Array<String>) {
     println("Введите время в формате ЧЧ:ММ:СС")
     val line = readLine()
     if (line != null) {
@@ -57,8 +59,9 @@ fun main(args: Array<String>) {
     else {
         println("Достигнут <конец файла> в процессе чтения строки. Программа прервана")
     }
-}
 
+    println("${dateStrToDigit("15 июля 2016")}")
+}*/
 
 /**
  * Средняя
@@ -71,7 +74,30 @@ fun main(args: Array<String>) {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val date = str.split(" ")
+    val month = listOf("января", "февраля", "марта", "апреля",
+            "мая", "июня", "июля", "августа", "сентября",
+            "октября", "ноября", "декабря")
+
+    try {
+        if (date.size > 3)
+            throw Exception("Data false")
+
+        if (!month.contains(date[1]))
+            throw Exception("Month false")
+
+        val monthNumber = month.indexOf(date[1]) + 1
+
+        if (daysInMonth(monthNumber, date[2].toInt()) < date[0].toInt())
+            throw Exception("Days false")
+
+        return String.format("%02d.%02d.%04d", date[0].toInt(), monthNumber, date[2].toInt())
+    } catch (e: Exception) {
+        return ""
+    }
+
+}
 
 /**
  * Средняя
@@ -83,7 +109,29 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val date = digital.split(".")
+    val month = listOf("января", "февраля", "марта", "апреля",
+            "мая", "июня", "июля", "августа", "сентября",
+            "октября", "ноября", "декабря")
+
+    try {
+        if (date.size > 3)
+            throw Exception("Data false")
+
+        if (date[1].toInt() !in 1..12)
+            throw Exception("Month false")
+
+        val monthNumber = date[1].toInt()
+
+        if (daysInMonth(monthNumber, date[2].toInt()) < date[0].toInt())
+            throw Exception("Days false")
+
+        return String.format("%d %s %d", date[0].toInt(), month[monthNumber - 1], date[2].toInt())
+    } catch (e: Exception) {
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -97,7 +145,17 @@ fun dateDigitToStr(digital: String): String = TODO()
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    if (!phone.matches(Regex("""^(\+)?([\d\s\-)(])*""")))
+        return ""
+
+    var answer = ""
+    phone.forEach {
+        answer += if (it.isDigit() || (it == '+')) it else ""
+    }
+
+    return answer
+}
 
 /**
  * Средняя
@@ -109,7 +167,21 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    var max = -1
+
+    try {
+        jumps.split(" ").forEach {
+            if (it !in setOf("%", "-") && (it.toInt() > max))
+                max = it.toInt()
+
+        }
+    } catch (e: Exception) {
+        return -1
+    }
+
+    return max
+}
 
 /**
  * Сложная
@@ -121,7 +193,28 @@ fun bestLongJump(jumps: String): Int = TODO()
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val results = jumps.split(" ")
+    var max = -1
+    var curHeight: Int
+    var curRes: String
+
+    try {
+        for (i in 0 until results.size step 2) {
+            curHeight = results[i].toInt()
+            curRes = results[i + 1]
+
+            if (!curRes.all { it in setOf('+', '-', '%') }) throw Exception("Incorrect result")
+
+            if (curRes.contains('+') && (curHeight > max))
+                max = curHeight
+        }
+    } catch (e: Exception) {
+        return -1
+    }
+
+    return max
+}
 
 /**
  * Сложная
@@ -132,7 +225,29 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    if (!expression.matches(Regex("""^\d+( [+-] \d+)*""")))
+        throw IllegalArgumentException()
+
+    val operand = expression.split(" ")
+    var answer = 0
+    var member: Int
+    var sign = "+"
+
+    for (i in 0 until operand.size step 2) {
+        member = operand[i].toInt()
+        answer += when (sign) {
+            "+" -> member
+            "-" -> -member
+            else -> 0
+        }
+
+        if (i == operand.size - 1) break
+
+        sign = operand[i + 1]
+    }
+    return answer
+}
 
 /**
  * Сложная
@@ -143,7 +258,17 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val words = str.split(" ")
+    var currentIndex = 0
+
+    for (i in 0 until (words.size - 1)) {
+        if (words[i].toLowerCase() == words[i + 1].toLowerCase())
+            return currentIndex
+        currentIndex += words[i].length + 1
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -156,7 +281,30 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val items = description.split("; ")
+    var maxPrice = -1.0
+    var curPrice: Double
+    var maxName = ""
+
+    try {
+        items.forEach {
+            var curItem = it.split(" ")
+            curPrice = curItem[1].toDouble()
+
+            if (curPrice < 0) throw Exception("Incorrect price")
+
+            if (maxPrice < curPrice) {
+                maxPrice = curPrice
+                maxName = curItem[0]
+            }
+        }
+    } catch (e: Exception) {
+        return ""
+    }
+
+    return maxName
+}
 
 /**
  * Сложная
@@ -169,7 +317,55 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val base = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M')
+    val dec = listOf(1, 5, 10, 50, 100, 500, 1000)
+    var answer = 0
+
+    try {
+        if (!roman.all { it in base }) throw Exception("Not number")
+
+        if (roman.length == 1)
+            answer += dec[base.indexOf(roman[0])]
+        else {
+            var prevDigit = roman[0]
+            var curCount = 1
+            var minIndex = base.indexOf(roman[0])
+
+            for (i in 1 until roman.length) {
+                if (roman[i] != prevDigit) {
+                    if (base.indexOf(prevDigit) > base.indexOf(roman[i]))
+                        answer += dec[base.indexOf(prevDigit)] * curCount
+                    else {
+                        if (prevDigit in setOf('V', 'L')) throw Exception("Not number")
+                        if (base.indexOf(roman[i]) - base.indexOf(prevDigit) !in 1..2)
+                            throw Exception("Not number")
+
+                        minIndex = minOf(base.indexOf(roman[i]), base.indexOf(prevDigit), minIndex)
+                        if (base.indexOf(roman[i]) - minIndex !in 0..2)
+                            throw Exception("Not number")
+
+                        answer -= dec[base.indexOf(prevDigit)] * curCount
+                    }
+
+                    curCount = 1
+                    prevDigit = roman[i]
+                } else {
+                    curCount++
+                    if ((curCount > 3) || (roman[i] in setOf('V', 'L'))) throw Exception("Not number")
+                }
+
+                if (i == (roman.length - 1))
+                    answer += dec[base.indexOf(roman[i])] * curCount
+            }
+        }
+
+    } catch (e: Exception) {
+        return -1
+    }
+    return answer
+}
+
 
 /**
  * Очень сложная
@@ -207,4 +403,88 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()/*{
+
+    fun bracketsIsCorrect(): Boolean {
+        var brackets = Stack<Char>()
+        commands.forEach {
+            when (it) {
+                '[' -> brackets.push(it)
+                ']' -> {
+                    if (brackets.isEmpty() || brackets.pop() != '[')
+                        return false//throw IllegalArgumentException()
+                }
+            }
+        }
+
+        if (brackets.isNotEmpty()) return false//throw IllegalArgumentException()
+
+        return true
+    }
+
+    fun commandsIsCorrect() =
+            commands.all { it in setOf(' ', '>', '<', '+', '-', '[', ']') }
+
+    if (!commandsIsCorrect() || !bracketsIsCorrect())
+        throw IllegalArgumentException()
+
+    var answer = Array(cells) { 0 }
+    var curPos: Int = cells / 2
+    var curCommand = 0
+
+    for (i in 0 until limit) {
+        if (curCommand >= commands.length) break
+        when (commands[curCommand]) {
+            //' ' -> curCommand++
+            '>' -> {
+                curPos++
+                if (curPos >= answer.size)
+                    throw IllegalStateException()
+            }
+            '<' -> {
+                curPos--
+                if (curPos < 0)
+                    throw IllegalStateException()
+            }
+            '+' -> {
+                answer[curPos]++
+            }
+            '-' -> {
+                answer[curPos]--
+            }
+            '[' ->
+                if (answer[curPos] == 0) {
+                    //new curCommand!!!
+                    var brackets = Stack<Char>()
+                    for (j in curCommand + 1 until commands.length) {
+                        if (commands[j] == '[')
+                            brackets.push(commands[j])
+                        if (commands[j] == ']')
+                            if (brackets.isEmpty())
+                                curCommand = j
+                            else
+                                brackets.pop()
+                    }
+                }
+            ']' -> {
+                if (answer[curPos] != 0) {
+                    //new curCommand!!!
+                    var brackets = Stack<Char>()
+
+                    for (j in curCommand - 1 downTo 0) {
+                        if (commands[j] == ']')
+                            brackets.push(commands[j])
+                        if (commands[j] == '[')
+                            if (brackets.isEmpty())
+                                curCommand = j
+                            else
+                                brackets.pop()
+                    }
+                }
+            }
+        }
+        curCommand++
+    }
+
+    return answer.toList()
+}*/

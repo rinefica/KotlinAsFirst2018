@@ -123,9 +123,9 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     var gradeToStudent = mutableMapOf<Int, List<String>>()
     grades.forEach { t, u ->
-        gradeToStudent[u] = (gradeToStudent[u] ?: emptyList()) + t
+        gradeToStudent[u] = ((gradeToStudent[u] ?: emptyList()) + t).sortedDescending()
     }
-
+    gradeToStudent.keys.sortedDescending()
     return gradeToStudent
 }
 
@@ -260,7 +260,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit =
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
 fun whoAreInBoth(a: List<String>, b: List<String>) =
-        a.filter { name -> b.contains(name) }
+        a.toSet().filter { name -> b.contains(name) }.toList()
 
 /**
  * Средняя
@@ -352,9 +352,29 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     var max = list.size - 1
     var myList = list.sorted()
 
+    fun findAnswer(min: Int, max: Int): Pair<Int, Int> {
+        var aMin = 0
+        var aMax = 0
+
+        if (myList[max] == myList[min]) {
+            aMin = list.indexOf(myList[min])
+            for (i in min + 1 until list.size)
+                if (list[i] == myList[max]){
+                    aMax = i
+                    break
+                }
+
+        } else {
+            aMin = list.indexOf(myList[min])
+            aMax = list.indexOf(myList[max])
+        }
+        return Pair(aMin, aMax)
+    }
+
     while (min < max) {
         if (myList[min] + myList[max] == number)
-            break
+            return findAnswer(min, max)
+
         if (myList[min] + myList[max] < number)
             min++
 
@@ -362,22 +382,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
             max--
     }
 
-    if (min == max) {
-        return Pair(-1, -1)
-    } else {
-        if (myList[max] == myList[min]) {
-            min = list.indexOf(myList[min])
-            for (i in min + 1 until list.size)
-                if (list[i] == myList[max])
-                    max = i
-        } else {
-            min = list.indexOf(myList[min])
-            max = list.indexOf(myList[max])
-        }
-
-    }
-
-    return Pair(min, max)
+    return Pair(-1, -1)
 }
 
 /**

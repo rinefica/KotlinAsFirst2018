@@ -92,7 +92,7 @@ fun dateStrToDigit(str: String): String {
         if (daysInMonth(monthNumber, date[2].toInt()) < date[0].toInt())
             throw Exception("Days false")
 
-        return String.format("%02d.%02d.%04d", date[0].toInt(), monthNumber, date[2].toInt())
+        return String.format("%02d.%02d.%d", date[0].toInt(), monthNumber, date[2].toInt())
     } catch (e: Exception) {
         return ""
     }
@@ -146,7 +146,7 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    if (!phone.matches(Regex("""^(\+)?([\d\s\-)(])*""")))
+    if (!phone.matches(Regex("""^(\+\s*\d)?([\d\s\-)(])*""")))
         return ""
 
     var answer = ""
@@ -171,11 +171,11 @@ fun bestLongJump(jumps: String): Int {
     var max = -1
 
     try {
-        jumps.split(" ").forEach {
-            if (it !in setOf("%", "-") && (it.toInt() > max))
-                max = it.toInt()
-
-        }
+        jumps.replace("[\\s]{2,}".toRegex(), " ")
+                .split(" ").forEach {
+                    if (it !in setOf("%", "-") && (it.toInt() > max))
+                        max = it.toInt()
+                }
     } catch (e: Exception) {
         return -1
     }

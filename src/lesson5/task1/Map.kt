@@ -299,30 +299,12 @@ fun extractRepeats(list: List<String>): Map<String, Int> =
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-
-    fun createList(w: String): List<Char> {
-        var word = listOf<Char>()
-        for (c in w)
-            word += c
-
-        return word
-    }
-
-    var curWord: List<Char>
-    var nextWord: List<Char>
-    for (i in 0 until words.size) {
-        curWord = createList(words[i])
-        for (j in (i + 1) until words.size) {
-            if (words[i].length == words[j].length) {
-                nextWord = createList(words[j])
-
-                for (c in curWord)
-                    nextWord -= c
-                if (nextWord.isEmpty())
-                    return true
-            }
-        }
-
+    words.forEach { word ->
+        if ((words - word).any { secondWord ->
+                    word.toLowerCase().toCharArray().sorted() ==
+                            secondWord.toLowerCase().toCharArray().sorted()
+                })
+            return true
     }
 
     return false
@@ -359,7 +341,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
         if (myList[max] == myList[min]) {
             aMin = list.indexOf(myList[min])
             for (i in min + 1 until list.size)
-                if (list[i] == myList[max]){
+                if (list[i] == myList[max]) {
                     aMax = i
                     break
                 }

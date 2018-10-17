@@ -98,12 +98,11 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
 
-    var mapC = (mapB + mapA).toMutableMap()
+    var mapC = mapA.toMutableMap()
 
-    mapC.forEach { keyC, _ ->
-        mapB[keyC]?.let { entryB ->
-            mapC.merge(keyC, entryB
-            ) { t: String, u: String -> setOf(t, u).joinToString() }
+    mapB.forEach { key, value ->
+        mapC.merge(key, value) { existed, _ ->
+            if (existed == value) existed else "$existed, $value"
         }
     }
 
@@ -213,16 +212,18 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     for (name in friends.keys) {
         friendsToAdd = friends.getValue(name)
         allFriendsOfName = friendsToAdd
+        curFriends = friendsToAdd
 
-        do {
-            curFriends = friendsToAdd
+        while (curFriends.isNotEmpty()) {
+            friendsToAdd = emptySet()
             for (friend in curFriends) {
-                friendsToAdd = friends[friend]?.filter {
+                friendsToAdd += friends[friend]?.filter {
                     it !in allFriendsOfName.union(setOf(name))
                 }?.toSet() ?: setOf()
                 allFriendsOfName += friendsToAdd
             }
-        } while (friendsToAdd.isNotEmpty())
+            curFriends = friendsToAdd
+        }
 
         allFriends += name to allFriendsOfName
     }
@@ -299,10 +300,10 @@ fun extractRepeats(list: List<String>): Map<String, Int> =
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    words.forEach { word ->
+    words.map { it.toLowerCase() }.forEach { word ->
         if ((words - word).any { secondWord ->
-                    word.toLowerCase().toCharArray().sorted() ==
-                            secondWord.toLowerCase().toCharArray().sorted()
+                    word.toCharArray().sorted() ==
+                            secondWord.toCharArray().sorted()
                 })
             return true
     }
@@ -332,30 +333,16 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
 
     var min = 0
     var max = list.size - 1
-    var myList = list.sorted()
 
-    fun findAnswer(min: Int, max: Int): Pair<Int, Int> {
-        var aMin = 0
-        var aMax = 0
+    var answer = mutableMapOf<Int, Int>()
+    list.forEachIndexed { i, value -> answer[i] = value }
 
-        if (myList[max] == myList[min]) {
-            aMin = list.indexOf(myList[min])
-            for (i in min + 1 until list.size)
-                if (list[i] == myList[max]) {
-                    aMax = i
-                    break
-                }
-
-        } else {
-            aMin = list.indexOf(myList[min])
-            aMax = list.indexOf(myList[max])
-        }
-        return Pair(aMin, aMax)
-    }
+    answer = answer.toList().sortedBy { (_, value) -> value }.toMap().toMutableMap()
+    var myList = answer.values.toList()
 
     while (min < max) {
         if (myList[min] + myList[max] == number)
-            return findAnswer(min, max)
+            return Pair(answer.keys.toList()[min], answer.keys.toList()[max])
 
         if (myList[min] + myList[max] < number)
             min++

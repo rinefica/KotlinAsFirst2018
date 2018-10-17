@@ -300,8 +300,9 @@ fun extractRepeats(list: List<String>): Map<String, Int> =
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    words.map { it.toLowerCase() }.forEach { word ->
-        if ((words - word).any { secondWord ->
+    var myWords = words.map { it.toLowerCase() }
+    myWords.forEach { word ->
+        if ((myWords - word).any { secondWord ->
                     word.toCharArray().sorted() ==
                             secondWord.toCharArray().sorted()
                 })

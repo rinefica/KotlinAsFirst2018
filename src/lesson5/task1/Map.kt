@@ -98,7 +98,7 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
 
-    var mapC = mapA.toMutableMap()
+    val mapC = mapA.toMutableMap()
 
     mapB.forEach { key, value ->
         mapC.merge(key, value) { existed, _ ->
@@ -120,7 +120,7 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    var gradeToStudent = mutableMapOf<Int, List<String>>()
+    val gradeToStudent = mutableMapOf<Int, List<String>>()
     grades.forEach { t, u ->
         gradeToStudent[u] = ((gradeToStudent[u] ?: emptyList()) + t).sortedDescending()
     }
@@ -152,7 +152,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>) =
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    var sumPrice = mutableMapOf<String, List<Double>>()
+    val sumPrice = mutableMapOf<String, List<Double>>()
 
     for ((name, price) in stockPrices) {
         sumPrice.merge(name, listOf(price)) { v, v1 -> v + v1 }
@@ -273,7 +273,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>) =
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String) =
-        word.toSet().all { symbol -> chars.map { it.toLowerCase() }.contains(symbol.toLowerCase()) }
+        chars.map { it.toLowerCase() }.containsAll(word.toLowerCase().toSet())
 
 /**
  * Средняя
@@ -300,7 +300,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> =
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    var myWords = words.map { it.toLowerCase() }
+    val myWords = words.map { it.toLowerCase() }
     myWords.forEach { word ->
         if ((myWords - word).any { secondWord ->
                     word.toCharArray().sorted() ==
@@ -339,7 +339,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     list.forEachIndexed { i, value -> answer[i] = value }
 
     answer = answer.toList().sortedBy { (_, value) -> value }.toMap().toMutableMap()
-    var myList = answer.values.toList()
+    val myList = answer.values.toList()
 
     while (min < max) {
         if (myList[min] + myList[max] == number)
@@ -378,7 +378,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     var answer = setOf<String>()
     val countTreas = treasures.size + 1
     val countM = capacity + 1
-    var price: Array<Array<Int>> = Array(countTreas) { Array(countM) { 0 } }
+    val price: Array<Array<Int>> = Array(countTreas) { Array(countM) { 0 } }
 
     fun findAnswer(k: Int, s: Int) {
         if (price[k][s] == 0)

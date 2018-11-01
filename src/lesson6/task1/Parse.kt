@@ -289,7 +289,7 @@ fun mostExpensive(description: String): String {
 
     try {
         items.forEach {
-            var curItem = it.split(" ")
+            val curItem = it.split(" ")
             curPrice = curItem[1].toDouble()
 
             if (curPrice < 0) throw Exception("Incorrect price")

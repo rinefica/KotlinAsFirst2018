@@ -152,13 +152,19 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>) =
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    val sumPrice = mutableMapOf<String, List<Double>>()
+    val sumPrice = mutableMapOf<String, Double>()
 
-    for ((name, price) in stockPrices) {
-        sumPrice.merge(name, listOf(price)) { v, v1 -> v + v1 }
+    for (name in stockPrices.map { it.first }.toSet()) {
+        var averagePrice = .0
+        val subListByName = stockPrices.filter { it.first == name }
+
+        for ((_, price) in subListByName)
+            averagePrice += price / subListByName.size
+
+        sumPrice[name] = averagePrice
     }
 
-    return sumPrice.mapValues { it.value.average() }
+    return sumPrice
 }
 
 /**

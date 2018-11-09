@@ -3,6 +3,7 @@
 package lesson6.task1
 
 import lesson2.task2.daysInMonth
+import java.util.*
 
 /**
  * Пример
@@ -403,10 +404,10 @@ fun fromRoman(roman: String): Int {
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()/*{
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
 
     fun bracketsIsCorrect(): Boolean {
-        var brackets = Stack<Char>()
+        val brackets = Stack<Char>()
         commands.forEach {
             when (it) {
                 '[' -> brackets.push(it)
@@ -425,17 +426,36 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TO
     fun commandsIsCorrect() =
             commands.all { it in setOf(' ', '>', '<', '+', '-', '[', ']') }
 
+    fun findNextCommand(isOpen: Boolean, curCommand: Int): Int {
+        val bracketToPush = if (isOpen) '[' else ']'
+        val bracketToPop = if (isOpen) ']' else '['
+
+        val brackets = Stack<Char>()
+        val top = curCommand + 1 until commands.length
+        val down = curCommand - 1 downTo 0
+
+        for (j in if (isOpen) top else down) {
+            if (commands[j] == bracketToPush)
+                brackets.push(commands[j])
+            else if (commands[j] == bracketToPop)
+                if (brackets.isEmpty())
+                    return j
+                else
+                    brackets.pop()
+        }
+        return 0
+    }
+
     if (!commandsIsCorrect() || !bracketsIsCorrect())
         throw IllegalArgumentException()
 
-    var answer = Array(cells) { 0 }
+    val answer = Array(cells) { 0 }
     var curPos: Int = cells / 2
     var curCommand = 0
 
     for (i in 0 until limit) {
         if (curCommand >= commands.length) break
         when (commands[curCommand]) {
-            //' ' -> curCommand++
             '>' -> {
                 curPos++
                 if (curPos >= answer.size)
@@ -453,38 +473,15 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TO
                 answer[curPos]--
             }
             '[' ->
-                if (answer[curPos] == 0) {
-                    //new curCommand!!!
-                    var brackets = Stack<Char>()
-                    for (j in curCommand + 1 until commands.length) {
-                        if (commands[j] == '[')
-                            brackets.push(commands[j])
-                        if (commands[j] == ']')
-                            if (brackets.isEmpty())
-                                curCommand = j
-                            else
-                                brackets.pop()
-                    }
-                }
+                if (answer[curPos] == 0)
+                    curCommand = findNextCommand(true, curCommand)
             ']' -> {
-                if (answer[curPos] != 0) {
-                    //new curCommand!!!
-                    var brackets = Stack<Char>()
-
-                    for (j in curCommand - 1 downTo 0) {
-                        if (commands[j] == ']')
-                            brackets.push(commands[j])
-                        if (commands[j] == '[')
-                            if (brackets.isEmpty())
-                                curCommand = j
-                            else
-                                brackets.pop()
-                    }
-                }
+                if (answer[curPos] != 0)
+                    curCommand = findNextCommand(false, curCommand)
             }
         }
         curCommand++
     }
 
     return answer.toList()
-}*/
+}

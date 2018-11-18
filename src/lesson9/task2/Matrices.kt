@@ -382,18 +382,6 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> {
     return result
 }
 
-fun main(args: Array<String>) {
-    val start = createMatrix(4, 4, 0)
-    var v = 1
-    for (i in 0..3)
-        for (j in 0..3)
-            start[i, j] = v++
-    start[3, 3] = 7
-    start[1, 2] = 0
-
-    val (a1, a2) = createAnswerMatrix()
-}
-
 fun getNum(matrix: Matrix<Int>, num: Int): Pair<Int, Int> {
     for (i in 0 until matrix.height)
         for (j in 0 until matrix.width)
@@ -433,7 +421,7 @@ fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
     if (moves.any { it !in 1..15 }) throw IllegalStateException()
     if (moves.isEmpty()) return matrix
 
-    var answer = matrix
+    val answer = matrix
 
     var (iZ, jZ) = getNum(matrix, 0)
     for (i in 0 until moves.size) {
@@ -453,7 +441,7 @@ fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
 }
 
 fun getAllMoves(matrix: Matrix<Int>): List<Int> {
-    var (iZ, jZ) = getNum(matrix, 0)
+    val (iZ, jZ) = getNum(matrix, 0)
 
     var answer = listOf<Int>()
 

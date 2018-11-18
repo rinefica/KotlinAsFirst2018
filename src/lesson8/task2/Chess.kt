@@ -1,13 +1,10 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson8.task2
 
-import lesson1.task1.sqr
 import java.lang.Math.abs
-import java.lang.Math.pow
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
-import kotlin.math.sqrt
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.

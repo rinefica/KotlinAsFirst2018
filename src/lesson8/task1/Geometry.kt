@@ -264,7 +264,7 @@ fun findMinPoints(points: List<Point>): List<Point> {
     fun isRight(a: Point, b: Point, c: Point) =
             (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x) < 0
 
-    var myAnswer = points.toMutableList()
+    val myAnswer = points.toMutableList()
 
     for (i in 1 until myAnswer.size)
         if (myAnswer[i].x < myAnswer[0].x)
@@ -278,7 +278,7 @@ fun findMinPoints(points: List<Point>): List<Point> {
         }
     }
 
-    var minPoints = Stack<Point>()
+    val minPoints = Stack<Point>()
     minPoints.add(myAnswer[0])
     minPoints.add(myAnswer[1])
 
@@ -324,10 +324,10 @@ fun minContainingCircle(vararg points: Point): Circle {
         return answer
     }
 
-    var minPoints = findMinPoints(points.toList())
+    val minPoints = findMinPoints(points.toList())
 
-    var (firstPoint, secondPoint) = maxDiameter(minPoints)
-    var circle = circleByDiameter(Segment(firstPoint, secondPoint))
+    val (firstPoint, secondPoint) = maxDiameter(minPoints)
+    val circle = circleByDiameter(Segment(firstPoint, secondPoint))
     if (minPoints.all { it.isInCircle(circle) }) return circle
 
     var minCircle = circle
@@ -335,7 +335,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     for (i in 0 until minPoints.size)
         for (j in i + 1 until minPoints.size)
             for (k in j + 1 until minPoints.size) {
-                var curCircle = circleByThreePoints(minPoints[i], minPoints[j], minPoints[k])
+                val curCircle = circleByThreePoints(minPoints[i], minPoints[j], minPoints[k])
                 if (curCircle.radius < minRadius &&
                         minPoints.all { it.isInCircle(curCircle) }){
                     minCircle = curCircle

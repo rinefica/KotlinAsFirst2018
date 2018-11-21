@@ -133,6 +133,7 @@ fun centerFile(inputName: String, outputName: String) {
     var left: String
 
     val writer = File(outputName).bufferedWriter()
+    writer.append("")
     input.forEach { line ->
         left = ""
         for (i in 1..(maxLength - line.length) / 2)
@@ -178,6 +179,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val maxLength: Int = input.map { it.length }.max()!!
     var words: List<String>
     val writer = File(outputName).bufferedWriter()
+    writer.append("")
     for (line in input) {
         words = line.split(" ")
         if (words.size < 2 || line.length == maxLength)
@@ -533,7 +535,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    val text = mutableListOf<String>()
+    TODO()
+    /*val text = mutableListOf<String>()
     val answer = ""
     for (line in File(inputName).readLines())
         text.add(line)
@@ -547,7 +550,7 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
     writer.appendln(answer)
     writer.appendln("""</body></html>""")
 
-    writer.close()
+    writer.close()*/
 }
 
 /**

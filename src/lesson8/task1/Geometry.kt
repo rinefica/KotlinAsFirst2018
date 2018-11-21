@@ -185,8 +185,15 @@ class Line private constructor(val b: Double, val angle: Double) {
     override fun toString() = "Line(${cos(angle)} * y = ${sin(angle)} * x + $b)"
 }
 
-fun getPositiveAngle(angle: Double) =
-        angle % PI + if (angle < 0) PI else .0
+fun main(args: Array<String>) {
+    bisectorByPoints(Point(5e-324, 0.26477951831091084), Point(.0, 0.07524610456752334))
+}
+
+fun getPositiveAngle(angle: Double): Double {
+    val a = angle % PI + if (angle < 0) PI else .0
+    return if (a == PI) .0 else a
+}
+
 
 /**
  * Средняя

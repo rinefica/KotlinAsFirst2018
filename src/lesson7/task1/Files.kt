@@ -265,7 +265,7 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
     var dict = mapOf<Char, String>()
 
     for ((k, v) in dictionary)
-        dict += k.toLowerCase() to v.toLowerCase()
+        dict += k.toLowerCase() to if (v.isNotEmpty()) v.toLowerCase() else ""
 
     var answer = ""
     var newS: String

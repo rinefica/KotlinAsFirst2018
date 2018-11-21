@@ -170,7 +170,6 @@ class Line private constructor(val b: Double, val angle: Double) {
      */
     fun crossPoint(other: Line): Point {
         val del = sin(angle) * cos(other.angle) - cos(angle) * sin(other.angle)
-        if (del.equals(0.0)) throw Exception("Parallel lines")
 
         val delY = other.b * sin(angle) - b * sin(other.angle)
         val delX = other.b * cos(angle) - b * cos(other.angle)
@@ -183,10 +182,6 @@ class Line private constructor(val b: Double, val angle: Double) {
     override fun hashCode(): Int = 31 * b.hashCode() + angle.hashCode()
 
     override fun toString() = "Line(${cos(angle)} * y = ${sin(angle)} * x + $b)"
-}
-
-fun main(args: Array<String>) {
-    bisectorByPoints(Point(5e-324, 0.26477951831091084), Point(.0, 0.07524610456752334))
 }
 
 fun getPositiveAngle(angle: Double): Double {

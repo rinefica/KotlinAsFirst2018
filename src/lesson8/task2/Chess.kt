@@ -65,6 +65,7 @@ fun square(notation: String): Square {
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
 fun rookMoveNumber(start: Square, end: Square): Int = when {
+    !start.inside() || !end.inside() -> throw IllegalArgumentException()
     start.column == end.column && start.row == end.row -> 0
     start.column == end.column || start.row == end.row -> 1
     else -> 2
@@ -85,6 +86,8 @@ fun rookMoveNumber(start: Square, end: Square): Int = when {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun rookTrajectory(start: Square, end: Square): List<Square> {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+
     var answer = listOf(start)
 
     answer += when {
@@ -157,6 +160,8 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
         return Square(2 * start.column - newCol, newRow)
     }
 
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+
     var answer = listOf<Square>()
 
     answer += when {
@@ -210,6 +215,8 @@ fun kingMoveNumber(start: Square, end: Square): Int =
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun kingTrajectory(start: Square, end: Square): List<Square> {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+
     if (start.row == end.row && start.column == end.column)
         return listOf(start)
 

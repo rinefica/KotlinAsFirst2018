@@ -129,7 +129,7 @@ fun centerFile(inputName: String, outputName: String) {
     for (line in File(inputName).readLines())
         input.add(line.trim())
 
-    val maxLength: Int = input.map { it.length }.max()!!
+    val maxLength: Int = input.map { it.length }.max() ?: 0
     var left: String
 
     val writer = File(outputName).bufferedWriter()
@@ -176,7 +176,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     for (line in File(inputName).readLines())
         input.add(line.trim().replace(Regex("[\\s]{2,}"), " "))
 
-    val maxLength: Int = input.map { it.length }.max()!!
+    val maxLength: Int = input.map { it.length }.max() ?: 0
     var words: List<String>
     val writer = File(outputName).bufferedWriter()
     writer.append("")

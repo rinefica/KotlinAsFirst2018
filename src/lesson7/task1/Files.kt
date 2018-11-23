@@ -60,11 +60,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     val text = File(inputName).bufferedReader().use { it.readText() }.toLowerCase()
 
     substrings.toSet().forEach {
-        answer[it] =
-                if (text.split(it.toLowerCase()).isNotEmpty())
-                    text.split(it.toLowerCase()).size - 1
-                else
-                    0
+        answer[it] = Regex(it.toLowerCase()).findAll(text).toList().size
     }
 
     return answer
@@ -271,9 +267,9 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
     var newS: String
     for (symbol in text)
         if (symbol.toLowerCase() in dict.keys) {
-            newS = dict[symbol.toLowerCase()]!!
+            newS = dict[symbol.toLowerCase()] ?: ""
 
-            if (symbol.isUpperCase())
+            if (symbol.isUpperCase() && newS.isNotEmpty())
                 newS = newS.first().toUpperCase() + newS.drop(1)
 
             answer += newS
